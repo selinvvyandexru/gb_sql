@@ -1,32 +1,33 @@
--- версия структуры 2-1
+-- РІРµСЂСЃРёСЏ СЃС‚СЂСѓРєС‚СѓСЂС‹ 2-1
+
 
 drop database if exists equip2;
 create DATABASE equip2;
 use equip2;
 
--- наименование трубопроводов
+-- РЅР°РёРјРµРЅРѕРІР°РЅРёРµ С‚СЂСѓР±РѕРїСЂРѕРІРѕРґРѕРІ
 CREATE TABLE pipelines  (
 	id TINYINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	full_name VARCHAR(100) NOT NULL UNIQUE,
 	short_name VARCHAR(7) NOT NULL UNIQUE,
-	`length` SMALLINT NOT NULL COMMENT 'Общая длина трубопровода'
+	`length` SMALLINT NOT NULL COMMENT 'РћР±С‰Р°СЏ РґР»РёРЅР° С‚СЂСѓР±РѕРїСЂРѕРІРѕРґР°'
 ) DEFAULT CHARSET=utf8;
 
 
--- километры, на которых расположены технологические площадки на трубопроводах
+-- РєРёР»РѕРјРµС‚СЂС‹, РЅР° РєРѕС‚РѕСЂС‹С… СЂР°СЃРїРѕР»РѕР¶РµРЅС‹ С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёРµ РїР»РѕС‰Р°РґРєРё РЅР° С‚СЂСѓР±РѕРїСЂРѕРІРѕРґР°С…
 CREATE TABLE technology_sites (
 	id SMALLINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	pipeline_id TINYINT UNSIGNED NOT NULL,
 	pipeline_km SMALLINT UNSIGNED,
 	FOREIGN KEY (pipeline_id) REFERENCES pipelines(id)
 ) DEFAULT CHARSET=utf8;
-/* ПОКА НЕ ИСПОЛЬЗУЕТСЯ - для организационно-управленческой структуры
--- названия ЛПДС
+/* РџРћРљРђ РќР• РРЎРџРћР›Р¬Р—РЈР•РўРЎРЇ - РґР»СЏ РѕСЂРіР°РЅРёР·Р°С†РёРѕРЅРЅРѕ-СѓРїСЂР°РІР»РµРЅС‡РµСЃРєРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹
+-- РЅР°Р·РІР°РЅРёСЏ Р›РџР”РЎ
 CREATE TABLE lpdses (
 	id SMALLINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	name VARCHAR(50) NOT NULL UNIQUE
 ) DEFAULT CHARSET=utf8;
--- площадки, входящие в состав ЛПДС
+-- РїР»РѕС‰Р°РґРєРё, РІС…РѕРґСЏС‰РёРµ РІ СЃРѕСЃС‚Р°РІ Р›РџР”РЎ
 CREATE TABLE lpdses_composition(
 	lpds_id SMALLINT UNSIGNED NOT NULL,
 	tech_site_id SMALLINT UNSIGNED NOT NULL,
@@ -38,23 +39,23 @@ CREATE TABLE lpdses_composition(
 ) DEFAULT CHARSET=utf8;
 */
 
--- системы АСУ ТП
+-- СЃРёСЃС‚РµРјС‹ РђРЎРЈ РўРџ
 CREATE TABLE asu_systems (
 	id SMALLINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
-	name VARCHAR(50) NOT NULL COMMENT 'Названия систем АСУ ТП',
+	name VARCHAR(50) NOT NULL COMMENT 'РќР°Р·РІР°РЅРёСЏ СЃРёСЃС‚РµРј РђРЎРЈ РўРџ',
 	full_name VARCHAR(150)
 ) DEFAULT CHARSET=utf8;
--- обознаяения контрольных точек систем АСУ
+-- РѕР±РѕР·РЅР°СЏРµРЅРёСЏ РєРѕРЅС‚СЂРѕР»СЊРЅС‹С… С‚РѕС‡РµРє СЃРёСЃС‚РµРј РђРЎРЈ
 CREATE TABLE asu_points (
 	id SERIAL PRIMARY KEY,
 	asu_id SMALLINT UNSIGNED NOT NULL,
-	point_index VARCHAR (15) COMMENT 'Позиционное обозначение прибора',
+	point_index VARCHAR (15) COMMENT 'РџРѕР·РёС†РёРѕРЅРЅРѕРµ РѕР±РѕР·РЅР°С‡РµРЅРёРµ РїСЂРёР±РѕСЂР°',
 	name VARCHAR(150),
 	INDEX (asu_id, point_index),
 	FOREIGN KEY (asu_id) REFERENCES asu_systems(id)
 ) DEFAULT CHARSET=utf8;
 
--- связь между площадками и системами АСУТП, которые их контролируют
+-- СЃРІСЏР·СЊ РјРµР¶РґСѓ РїР»РѕС‰Р°РґРєР°РјРё Рё СЃРёСЃС‚РµРјР°РјРё РђРЎРЈРўРџ, РєРѕС‚РѕСЂС‹Рµ РёС… РєРѕРЅС‚СЂРѕР»РёСЂСѓСЋС‚
 CREATE TABLE sites_controlling_systems (
 	asu_id SMALLINT UNSIGNED NOT NULL,
 	tech_site_id SMALLINT UNSIGNED NOT NULL,
@@ -63,14 +64,14 @@ CREATE TABLE sites_controlling_systems (
 	FOREIGN KEY (asu_id) REFERENCES asu_systems(id) 
 )DEFAULT CHARSET=utf8;
 
--- виды технологических сооружений на площадках
+-- РІРёРґС‹ С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёС… СЃРѕРѕСЂСѓР¶РµРЅРёР№ РЅР° РїР»РѕС‰Р°РґРєР°С…
 CREATE TABLE facilities (
 	id SMALLINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
-	name VARCHAR(50) NOT NULL COMMENT 'Названия объектов на площадках - УЗА. ОУ, 
-		площадка ФГУ. маслоблок. помещение вспомсистем. СИКН, блок-бокс ПКУ,',
-	full_name VARCHAR(150) COMMENT 'Если необходимо, то указывается расшифровка аббревиатуры'
+	name VARCHAR(50) NOT NULL COMMENT 'РќР°Р·РІР°РЅРёСЏ РѕР±СЉРµРєС‚РѕРІ РЅР° РїР»РѕС‰Р°РґРєР°С… - РЈР—Рђ. РћРЈ, 
+		РїР»РѕС‰Р°РґРєР° Р¤Р“РЈ. РјР°СЃР»РѕР±Р»РѕРє. РїРѕРјРµС‰РµРЅРёРµ РІСЃРїРѕРјСЃРёСЃС‚РµРј. РЎРРљРќ, Р±Р»РѕРє-Р±РѕРєСЃ РџРљРЈ,',
+	full_name VARCHAR(150) COMMENT 'Р•СЃР»Рё РЅРµРѕР±С…РѕРґРёРјРѕ, С‚Рѕ СѓРєР°Р·С‹РІР°РµС‚СЃСЏ СЂР°СЃС€РёС„СЂРѕРІРєР° Р°Р±Р±СЂРµРІРёР°С‚СѓСЂС‹'
 ) DEFAULT CHARSET=utf8;
--- технологические сооружения на имеющихся площадках
+-- С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёРµ СЃРѕРѕСЂСѓР¶РµРЅРёСЏ РЅР° РёРјРµСЋС‰РёС…СЃСЏ РїР»РѕС‰Р°РґРєР°С…
 CREATE TABLE technology_facilities (
 	id MEDIUMINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	tech_site_id SMALLINT UNSIGNED NOT NULL,
@@ -79,30 +80,30 @@ CREATE TABLE technology_facilities (
 	FOREIGN KEY (facility_id) REFERENCES facilities(id)
 ) DEFAULT CHARSET=utf8;
 
--- виды технологических объектов
+-- РІРёРґС‹ С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёС… РѕР±СЉРµРєС‚РѕРІ
 CREATE TABLE objects (
 	id SMALLINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
-	name VARCHAR(50) NOT NULL COMMENT 'Названия объектов - МНА, задвижка, колодец, фильтр..',
+	name VARCHAR(50) NOT NULL COMMENT 'РќР°Р·РІР°РЅРёСЏ РѕР±СЉРµРєС‚РѕРІ - РњРќРђ, Р·Р°РґРІРёР¶РєР°, РєРѕР»РѕРґРµС†, С„РёР»СЊС‚СЂ..',
 	full_name VARCHAR(150)
 ) DEFAULT CHARSET=utf8;
--- технологические объекты на конткретной площадке
+-- С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёРµ РѕР±СЉРµРєС‚С‹ РЅР° РєРѕРЅС‚РєСЂРµС‚РЅРѕР№ РїР»РѕС‰Р°РґРєРµ
 CREATE TABLE technology_objects (
 	id INT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	tech_facility_id MEDIUMINT UNSIGNED NOT NULL,
 	object_id SMALLINT UNSIGNED NOT NULL,
-	tech_object_index VARCHAR(20) NOT NULL COMMENT 'Номера/индексы объектов на конкретной площадке - 
-		задвижка №143,	МНА №1, колодец до задвижки',	
+	tech_object_index VARCHAR(20) NOT NULL COMMENT 'РќРѕРјРµСЂР°/РёРЅРґРµРєСЃС‹ РѕР±СЉРµРєС‚РѕРІ РЅР° РєРѕРЅРєСЂРµС‚РЅРѕР№ РїР»РѕС‰Р°РґРєРµ - 
+		Р·Р°РґРІРёР¶РєР° в„–143,	РњРќРђ в„–1, РєРѕР»РѕРґРµС† РґРѕ Р·Р°РґРІРёР¶РєРё',	
 	FOREIGN KEY (tech_facility_id) REFERENCES technology_facilities(id),
 	FOREIGN KEY (object_id) REFERENCES objects(id)
 ) DEFAULT CHARSET=utf8;
 
--- список параметров, которые необходимо контролировать
+-- СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ
 CREATE TABLE controlled_parameters (
 	id SMALLINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
-	name VARCHAR(50) CHARACTER SET utf8 NOT NULL COMMENT 'Названия параметров, контролируемых АСУ ТП - 
-		вибрация, температура, положение, затопление, открытие, смещение, давление...'
+	name VARCHAR(50) CHARACTER SET utf8 NOT NULL COMMENT 'РќР°Р·РІР°РЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ, РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРјС‹С… РђРЎРЈ РўРџ - 
+		РІРёР±СЂР°С†РёСЏ, С‚РµРјРїРµСЂР°С‚СѓСЂР°, РїРѕР»РѕР¶РµРЅРёРµ, Р·Р°С‚РѕРїР»РµРЅРёРµ, РѕС‚РєСЂС‹С‚РёРµ, СЃРјРµС‰РµРЅРёРµ, РґР°РІР»РµРЅРёРµ...'
 ) DEFAULT CHARSET=utf8;
--- точки контроля параметров на технологических объектах
+-- С‚РѕС‡РєРё РєРѕРЅС‚СЂРѕР»СЏ РїР°СЂР°РјРµС‚СЂРѕРІ РЅР° С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёС… РѕР±СЉРµРєС‚Р°С…
 CREATE TABLE objects_control_points (
 	id BIGINT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	tech_object_id INT UNSIGNED NOT NULL,
@@ -112,7 +113,7 @@ CREATE TABLE objects_control_points (
 	FOREIGN KEY (ctrl_param_id) REFERENCES controlled_parameters(id),
 	FOREIGN KEY (asu_point_id) REFERENCES asu_points(id)
 ) DEFAULT CHARSET=utf8;
--- точки контроля параметров сооружений (затопление, загазованность и т.п.)
+-- С‚РѕС‡РєРё РєРѕРЅС‚СЂРѕР»СЏ РїР°СЂР°РјРµС‚СЂРѕРІ СЃРѕРѕСЂСѓР¶РµРЅРёР№ (Р·Р°С‚РѕРїР»РµРЅРёРµ, Р·Р°РіР°Р·РѕРІР°РЅРЅРѕСЃС‚СЊ Рё С‚.Рї.)
 CREATE TABLE facilities_control_points (
 	id INT UNSIGNED NOT NULL UNIQUE PRIMARY KEY,
 	tech_facility_id MEDIUMINT UNSIGNED NOT NULL,
@@ -124,12 +125,12 @@ CREATE TABLE facilities_control_points (
 ) DEFAULT CHARSET=utf8;
 
 
--- приборы КИП - таблица-зашлушка, для учета приборов д/б свой набор таблиц,
--- который сводится к данной таблице
+-- РїСЂРёР±РѕСЂС‹ РљРРџ - С‚Р°Р±Р»РёС†Р°-Р·Р°С€Р»СѓС€РєР°, РґР»СЏ СѓС‡РµС‚Р° РїСЂРёР±РѕСЂРѕРІ Рґ/Р± СЃРІРѕР№ РЅР°Р±РѕСЂ С‚Р°Р±Р»РёС†,
+-- РєРѕС‚РѕСЂС‹Р№ СЃРІРѕРґРёС‚СЃСЏ Рє РґР°РЅРЅРѕР№ С‚Р°Р±Р»РёС†Рµ
 CREATE TABLE units (
 	id SERIAL PRIMARY KEY,
-	name VARCHAR(50) NOT NULL COMMENT 'Назначение прибора - сигнализатор уровня, выключатель
-		концевой, манометр, преобразователь давления...'
+	name VARCHAR(50) NOT NULL COMMENT 'РќР°Р·РЅР°С‡РµРЅРёРµ РїСЂРёР±РѕСЂР° - СЃРёРіРЅР°Р»РёР·Р°С‚РѕСЂ СѓСЂРѕРІРЅСЏ, РІС‹РєР»СЋС‡Р°С‚РµР»СЊ
+		РєРѕРЅС†РµРІРѕР№, РјР°РЅРѕРјРµС‚СЂ, РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚РµР»СЊ РґР°РІР»РµРЅРёСЏ...'
 ) DEFAULT CHARSET=utf8;
 
 CREATE TABLE installed_units (

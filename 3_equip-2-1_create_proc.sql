@@ -1,7 +1,7 @@
 DELIMITER // 
 DROP PROCEDURE IF EXISTS create_asu_view //
 CREATE  PROCEDURE create_asu_view (IN value VARCHAR(7) CHARSET utf8 )
--- создание представления, с информацией о вхождении площадок в конкретную АСУ
+-- СЃРѕР·РґР°РЅРёРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ, СЃ РёРЅС„РѕСЂРјР°С†РёРµР№ Рѕ РІС…РѕР¶РґРµРЅРёРё РїР»РѕС‰Р°РґРѕРє РІ РєРѕРЅРєСЂРµС‚РЅСѓСЋ РђРЎРЈ
 BEGIN
 	SET @asuname = value;
 	DROP TABLE IF EXISTS tmp_name;
@@ -18,7 +18,7 @@ BEGIN
 	WHERE asu_systems.name = (SELECT name FROM tmp_name WHERE id=1);
 	
 
--- создание представления, хранящее информацию по конкретной АСУ
+-- СЃРѕР·РґР°РЅРёРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ, С…СЂР°РЅСЏС‰РµРµ РёРЅС„РѕСЂРјР°С†РёСЋ РїРѕ РєРѕРЅРєСЂРµС‚РЅРѕР№ РђРЎРЈ
 	CREATE OR REPLACE VIEW points_asu AS
 	(SELECT sites.pipe_name AS pipe_name, sites.pipe_km, fac.name AS fac_name, objects.name AS object_name,
 						tobj.tech_object_index AS object_idx, ctrl_param.name AS param_type,   asp.point_index, asp.name AS parameters_name,
