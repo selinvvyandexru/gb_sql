@@ -1,3 +1,4 @@
+-- Курсовой проект Селин В.В.
 DELIMITER // 
 DROP PROCEDURE IF EXISTS create_asu_view //
 CREATE  PROCEDURE create_asu_view (IN value VARCHAR(7) CHARSET utf8 )
